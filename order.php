@@ -4,6 +4,12 @@ require __DIR__ . '/includes/bootstrap.php';
 $user = require_login();
 $id = get_int('id');
 
+// CSRF 令牌：取消订单使用 POST + 令牌校验
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrfToken = $_SESSION['csrf_token'];
+
 if (lab_enabled('idor')) {
     // V2 漏洞分支：只按订单 id 查询，忽略归属
     $st = db()->prepare('SELECT * FROM orders WHERE id = ?');
@@ -82,6 +88,15 @@ include __DIR__ . '/includes/header.php';
     <div class="summary-row"><span>下单时间</span><span><?= e($order['created_at']) ?></span></div>
     <div class="summary-row"><span>订单状态</span><span class="badge"><?= e($order['status']) ?></span></div>
     <div class="summary-row"><span>订单金额</span><span>¥<?= money($order['total']) ?></span></div>
+    <?php if ($order['status'] === '待发货'): ?>
+      <form method="post" action="/cancel_order.php" style="margin-top:16px"
+            onsubmit="return confirm('确定取消订单 <?= e($order['order_no']) ?> 吗？');">
+        <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+        <input type="hidden" name="csrf" value="<?= e($csrfToken) ?>">
+        <input type="hidden" name="back" value="/order.php?id=<?= (int)$order['id'] ?>">
+        <button type="submit" class="btn btn-danger btn-block">取消订单</button>
+      </form>
+    <?php endif; ?>
   </div>
 </div>
 <?php include __DIR__ . '/includes/footer.php'; ?>

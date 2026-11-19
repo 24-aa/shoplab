@@ -5,7 +5,7 @@ $user = require_admin();
 
 $labs = [
     'upload' => ['name' => 'V1 任意文件上传', 'code' => 'profile.php 头像上传'],
-    'idor'   => ['name' => 'V2 水平越权',     'code' => 'order.php 订单详情'],
+    'idor'   => ['name' => 'V2 水平越权',     'code' => 'order.php 详情 / cancel_order.php 取消'],
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

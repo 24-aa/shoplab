@@ -3,7 +3,36 @@ require __DIR__ . '/includes/bootstrap.php';
 
 $user = require_login();
 
-$cart = $_SESSION['cart'] ?? [];
+// 立即购买：把当前商品作为本次结算内容（不改动购物车），再跳转回干净的确认页
+if (isset($_GET['direct'])) {
+    $did  = (int)($_GET['id'] ?? 0);
+    $dqty = max(1, (int)($_GET['qty'] ?? 1));
+    $st = db()->prepare('SELECT id, stock, status FROM products WHERE id = ? AND status = 1');
+    $st->execute([$did]);
+    $p = $st->fetch();
+    if (!$p) {
+        flash('商品不存在或已下架', 'error');
+        redirect('/index.php');
+    }
+    if ((int)$p['stock'] <= 0) {
+        flash('该商品暂时缺货', 'error');
+        redirect('/product.php?id=' . $did);
+    }
+    if ($dqty > (int)$p['stock']) {
+        $dqty = (int)$p['stock'];
+        flash('库存不足，已按最大库存 ' . $dqty . ' 件结算', 'error');
+    }
+    $_SESSION['direct_buy'] = ['id' => $did, 'qty' => $dqty];
+    redirect('/checkout.php');
+}
+
+// 结算内容：优先使用立即购买的单品，否则用购物车
+$direct = $_SESSION['direct_buy'] ?? null;
+if ($direct !== null) {
+    $cart = [(int)$direct['id'] => (int)$direct['qty']];
+} else {
+    $cart = $_SESSION['cart'] ?? [];
+}
 if (!$cart) {
     flash('购物车是空的，请先挑选商品', 'error');
     redirect('/cart.php');
@@ -24,9 +53,13 @@ foreach ($st->fetchAll() as $p) {
 }
 
 if (!$items) {
-    $_SESSION['cart'] = [];
-    flash('购物车中的商品均已下架', 'error');
-    redirect('/cart.php');
+    if ($direct !== null) {
+        unset($_SESSION['direct_buy']);
+    } else {
+        $_SESSION['cart'] = [];
+    }
+    flash('商品均已下架', 'error');
+    redirect($direct !== null ? '/index.php' : '/cart.php');
 }
 
 $errors = [];
@@ -57,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $orderItems = [];
             $total = 0.0;
 
-            foreach ($_SESSION['cart'] as $pid => $qty) {
+            foreach ($cart as $pid => $qty) {
                 $pid = (int)$pid;
                 $qty = (int)$qty;
                 if ($qty <= 0) {
@@ -106,7 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('/checkout.php');
         }
 
-        $_SESSION['cart'] = [];
+        if ($direct !== null) {
+            unset($_SESSION['direct_buy']);   // 直购：只清直购标记，保留购物车
+        } else {
+            $_SESSION['cart'] = [];           // 购物车结算：清空购物车
+        }
         flash('下单成功，订单号 ' . $no);
         redirect('/order.php?id=' . $orderId);
     }
