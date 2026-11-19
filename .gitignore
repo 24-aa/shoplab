@@ -1,0 +1,15 @@
+# 运行时上传的头像，仅保留目录
+uploads/avatars/*
+!uploads/avatars/.gitkeep
+
+# 编辑器与系统文件
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 临时文件
+*.log
+*.tmp
+~$*
