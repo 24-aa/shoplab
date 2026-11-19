@@ -83,10 +83,10 @@ try {
     if ($count === 0) {
         $hash = password_hash('123456', PASSWORD_DEFAULT);
         $st = $pdo->prepare('INSERT INTO users (username, password, nickname, email, role) VALUES (?, ?, ?, ?, ?)');
-        $st->execute(['admin', $hash, '管理员', 'admin@shoplab.local', 'admin']);
-        $st->execute(['alice', $hash, '爱丽丝', 'alice@shoplab.local', 'user']);
-        $st->execute(['bob', $hash, '鲍勃', 'bob@shoplab.local', 'user']);
-        $log[] = '种子账号已写入：admin / alice / bob（密码 123456）';
+        $st->execute(['管理员', $hash, '管理员', 'admin@shoplab.local', 'admin']);
+        $st->execute(['账号1', $hash, '账号1', 'alice@shoplab.local', 'user']);
+        $st->execute(['账号2', $hash, '账号2', 'bob@shoplab.local', 'user']);
+        $log[] = '种子账号已写入：管理员 / 账号1 / 账号2（密码 123456）';
 
         $pdo->exec("INSERT INTO categories (name) VALUES ('数码影音'), ('家居生活'), ('办公外设')");
 
@@ -154,7 +154,7 @@ a{color:#0b6b3d}
       <?php endforeach; ?>
     </ul>
     <p>安装完成。<a href="/index.php">进入首页</a> · <a href="/login.php">登录</a></p>
-    <p style="color:#5b5b63">种子账号：admin / alice / bob，密码均为 123456。</p>
+    <p style="color:#5b5b63">种子账号：管理员 / 账号1 / 账号2，密码均为 123456。</p>
   <?php endif; ?>
 </div>
 </body>

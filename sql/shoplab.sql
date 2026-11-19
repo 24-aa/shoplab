@@ -67,9 +67,9 @@ CREATE TABLE IF NOT EXISTS `order_items` (
 
 -- 种子账号，密码均为 123456
 INSERT IGNORE INTO `users` (`username`, `password`, `nickname`, `email`, `role`) VALUES
-('admin', '$2y$10$lBNpqmisHiZ9Ix6XhDwMv.Zg9luL0cNZ5yArM5HQyhrDXrcy1WGEe', '管理员', 'admin@shoplab.local', 'admin'),
-('alice', '$2y$10$lBNpqmisHiZ9Ix6XhDwMv.Zg9luL0cNZ5yArM5HQyhrDXrcy1WGEe', '爱丽丝', 'alice@shoplab.local', 'user'),
-('bob',   '$2y$10$lBNpqmisHiZ9Ix6XhDwMv.Zg9luL0cNZ5yArM5HQyhrDXrcy1WGEe', '鲍勃', 'bob@shoplab.local', 'user');
+('管理员', '$2y$10$lBNpqmisHiZ9Ix6XhDwMv.Zg9luL0cNZ5yArM5HQyhrDXrcy1WGEe', '管理员', 'admin@shoplab.local', 'admin'),
+('账号1',  '$2y$10$lBNpqmisHiZ9Ix6XhDwMv.Zg9luL0cNZ5yArM5HQyhrDXrcy1WGEe', '账号1', 'alice@shoplab.local', 'user'),
+('账号2',  '$2y$10$lBNpqmisHiZ9Ix6XhDwMv.Zg9luL0cNZ5yArM5HQyhrDXrcy1WGEe', '账号2', 'bob@shoplab.local', 'user');
 
 INSERT IGNORE INTO `categories` (`id`, `name`) VALUES (1, '数码影音'), (2, '家居生活'), (3, '办公外设');
 

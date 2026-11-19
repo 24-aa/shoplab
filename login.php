@@ -48,6 +48,6 @@ include __DIR__ . '/includes/header.php';
     <button class="btn btn-primary btn-block" type="submit">登录</button>
   </form>
   <p class="hint">还没有账号？<a href="/register.php">注册</a></p>
-  <p class="hint">测试账号：admin / alice / bob，密码均为 123456</p>
+  <p class="hint">测试账号：管理员 / 账号1 / 账号2，密码均为 123456</p>
 </div>
 <?php include __DIR__ . '/includes/footer.php'; ?>
