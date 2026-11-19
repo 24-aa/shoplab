@@ -49,7 +49,11 @@ include __DIR__ . '/includes/header.php';
           <label for="qty">数量</label>
           <input class="input qty-input" id="qty" type="number" name="qty" value="1" min="1" max="<?= $stock ?>">
         </div>
+        <input type="hidden" name="direct" value="1">
+        <input type="hidden" name="id" value="<?= (int)$product['id'] ?>">
         <button class="btn btn-primary" type="submit" style="margin-top:20px">加入购物车</button>
+        <button class="btn" type="submit" formmethod="get" formaction="/checkout.php"
+                style="margin-top:20px;margin-left:8px;color:#fff;background:#e8912d;border-color:#e8912d">立即购买</button>
       </form>
     <?php else: ?>
       <button class="btn" type="button" disabled>暂时缺货</button>

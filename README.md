@@ -3,7 +3,7 @@
 教学用漏洞靶场（PHP 8 + MySQL + PDO，无框架），只包含两个漏洞：
 
 - **V1 任意文件上传**：个人中心头像上传
-- **V2 水平越权（IDOR）**：订单详情页
+- **V2 水平越权（IDOR）**：订单详情页、取消订单
 
 其余功能均按安全写法实现。
 
@@ -27,11 +27,12 @@ shoplab/
 ├── install.php         一键初始化数据库
 ├── start.bat           启动 Apache/MySQL 并打开浏览器
 ├── index.php           商品列表
-├── product.php         商品详情、加入购物车
+├── product.php         商品详情、加入购物车、立即购买
 ├── cart.php            购物车
-├── checkout.php        确认订单
-├── orders.php          我的订单
+├── checkout.php        确认订单（支持购物车与立即购买）
+├── orders.php          我的订单、取消订单、删除订单
 ├── order.php           订单详情
+├── cancel_order.php    取消订单并回滚库存
 ├── login.php / register.php / logout.php
 └── profile.php         个人中心（头像上传）
 ```
@@ -85,7 +86,7 @@ Listen 8080
 用 admin 登录后进入「后台 → 漏洞开关」，可分别开关：
 
 - V1 任意文件上传（`profile.php`）
-- V2 水平越权（`order.php`）
+- V2 水平越权（`order.php`、`cancel_order.php`）
 
 开关状态保存在 `data/labs.json`，默认均为开启。
 
@@ -100,9 +101,10 @@ Listen 8080
 
 ### V2 水平越权
 
-1. alice 登录并下单，记下订单详情地址中的 `id`。
+1. alice 登录并下单，记下订单详情地址中的 `id`，订单状态为「待发货」。
 2. 用 bob 登录，访问 `http://127.0.0.2:8080/order.php?id=1`，能看到 alice 的订单。
-3. 后台关闭 V2 开关，bob 再访问同一地址返回 404。
+3. 在该页面点击「取消订单」，alice 的订单状态被改为「已取消」，商品库存同步回滚。
+4. 后台关闭 V2 开关，bob 再访问同一地址返回 404；直接提交取消请求也会提示「订单不存在或无权操作」。
 
 ## 说明
 
